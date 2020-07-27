@@ -13,4 +13,18 @@ const Container = styled.View`
   justify-content: center;
 `;
 
-export {Container, screenWidth, screenHeight};
+const Button = styled.TouchableOpacity`
+  background-color: #d24d57;
+  width: 200px;
+  height: 40px;
+  border-radius: 30px;
+`;
+
+const ButtonText = styled.Text`
+  line-height: 40px;
+  width: 100%;
+  text-align: center;
+  color: white;
+`;
+
+export {Container, screenWidth, screenHeight, Button, ButtonText};
