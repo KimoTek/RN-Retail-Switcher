@@ -1,117 +1,34 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * Generated with the TypeScript template
- * https://github.com/react-native-community/react-native-template-typescript
- *
- * @format
- */
-
-import React, {useRef, useState} from 'react';
-import {
-  SafeAreaView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableHighlight,
-  Alert,
-} from 'react-native';
+import React, {useRef, useState, useLayoutEffect} from 'react';
+import {Text} from 'react-native';
 import 'react-native-gesture-handler';
-import {Container, ButtonText, Button} from './global.styles';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {
-  NavigationContainer,
-  getFocusedRouteNameFromRoute,
-} from '@react-navigation/native';
+import {NavigationContainer} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
-import ContentLoader, {Rect, Circle} from 'react-content-loader/native';
-import Swipeable from 'react-native-swipeable';
+import * as Animatable from 'react-native-animatable';
 import styled from 'styled-components/native';
-// import Header from './src/components/HeaderDropdown';
-import AppleStyleSwipeableRow from './src/components/Swipeable/swipeable';
 Icon.loadFont();
 
-function Home({navigation}) {
-  return (
-    <SafeAreaView style={[styles.container, {backgroundColor: '#6a51ae'}]}>
-      <StatusBar barStyle="light-content" backgroundColor="#6a51ae" />
-      <Text style={{color: '#fff'}}>Home Screen</Text>
-      <Button onPress={() => navigation.navigate('Details')}>
-        <ButtonText>Next Screen</ButtonText>
-      </Button>
-    </SafeAreaView>
-  );
-}
+import {Dimensions} from 'react-native';
 
-function Details({navigation}) {
-  return (
-    <SafeAreaView style={[styles.container, {backgroundColor: '#ecf0f1'}]}>
-      <StatusBar barStyle="dark-content" backgroundColor="#ecf0f1" />
-      <Container>
-        <Text>Details Screen</Text>
-        {/* <Button onPress={() => navigation.navigate('WithTabs')}>
-          <ButtonText>Next Screen</ButtonText>
-        </Button> */}
-      </Container>
-    </SafeAreaView>
-  );
-}
+const screenHeight = Math.round(Dimensions.get('window').height);
 
-const MyLoaderV3 = (props) => (
-  <ContentLoader
-    speed={2}
-    width={'100%'}
-    height={70}
-    viewBox="0 0 400 70"
-    backgroundColor="#999999"
-    foregroundColor="#ecebeb"
-    preserveAspectRatio="none"
-    {...props}>
-    <Rect x="3%" y="16" rx="6" ry="6" width="70%" height="15" />
-    <Rect x="3%" y="36" rx="6" ry="6" width="70%" height="15" />
-    <Rect x="3%" y="55" rx="6" ry="6" width="70%" height="15" />
-    <Circle cx="83%" cy="42" r="27" />
-  </ContentLoader>
-);
+const Container = styled.View`
+  background-color: #d2d7d3;
+  height: ${screenHeight}px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
 
-let maps = [1, 2, 3, 4, 5];
-
-function AnalyticsTab() {
-  return (
-    <SafeAreaView style={{flex: 1, alignItems: 'center'}}>
-      <Text>Analytics Tab</Text>
-      {maps.map((item) => (
-        <MyLoaderV3 key={item} />
-      ))}
-      <Text>This is bottom text.</Text>
-    </SafeAreaView>
-  );
-}
-
-const leftContent = <Text>Pull to activate</Text>;
-
-const rightButtons = [
-  <TouchableHighlight>
-    <Text>Button 1</Text>
-  </TouchableHighlight>,
-  <TouchableHighlight>
-    <Text>Button 2</Text>
-  </TouchableHighlight>,
-];
-
-function MyListItem() {
-  return (
-    <Swipeable leftContent={leftContent} rightButtons={rightButtons}>
-      <Text>My swipeable content</Text>
-    </Swipeable>
-  );
-}
-
-import * as Animatable from 'react-native-animatable';
+const Button = styled.TouchableOpacity`
+  background-color: #d24d57;
+  width: 200px;
+  height: 40px;
+  border-radius: 30px;
+`;
 
 const StyledText = styled.Text`
   text-align: center;
@@ -124,6 +41,33 @@ const StyledButton = styled(Button)`
   background-color: transparent;
   width: 100%;
   border: 1px solid white;
+`;
+
+const HeaderText = styled.Text`
+  text-align: center;
+  line-height: 40;
+`;
+
+const StyledAnimatableView = styled(Animatable.View)`
+  position: absolute;
+  top: 0;
+  height: ${(props) => (props.viewVisible ? '100%' : 0)};
+  width: ${(props) => (props.viewVisible ? '100%' : 0)};
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  border-bottom-color: red;
+  border-bottom-width: 1;
+  border-top-color: red;
+  border-top-width: 1px;
+  background-color: #6c7a89;
+  opacity: 1;
+`;
+
+const StyledSafeArea = styled.SafeAreaView`
+  flex: 1;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 function SettingsTab({navigation}) {
@@ -141,35 +85,16 @@ function SettingsTab({navigation}) {
     } else {
       await setStoreSwitcherVisibility(true);
       setInvertCaret(true);
-      view?.current?.fadeInDown(800).then((endState) => {});
+      view?.current?.fadeInDown(800).then((/* endState */) => {});
     }
   };
 
-  /* React.useEffect(() => {
-    console.log('Calling here...', viewVisible);
-    if (view?.current) {
-      if (viewVisible) {
-        view.current.fadeOutUp(800).then(() => {
-          // setStoreSwitcherVisibility(false);
-          console.log('Visibility viewVisible>>', viewVisible);
-        });
-      } else {
-        // setStoreSwitcherVisibility(true);
-        view.current.fadeInDown(800).then((endState) => {
-          console.log('Visibility viewVisible', viewVisible);
-        });
-      }
-    }
-  }, [viewVisible]); */
-
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     navigation.setOptions({
       tabBarVisible: false,
       headerTitle: () => (
         <Button onPress={bounce}>
-          <Text style={{textAlign: 'center', lineHeight: 40}}>{`${store} ${
-            !invertCaret ? '▼' : '▲'
-          }`}</Text>
+          <HeaderText>{`${store} ${!invertCaret ? '▼' : '▲'}`}</HeaderText>
         </Button>
       ),
     });
@@ -184,36 +109,20 @@ function SettingsTab({navigation}) {
   ];
 
   return (
-    <SafeAreaView
-      style={{flex: 1, justifyContent: 'space-between', alignItems: 'center'}}>
+    <StyledSafeArea>
       <Container
         style={{
           flex: 1,
           justifyContent: 'flex-start',
           backgroundColor: 'white',
         }}>
-        <Text>This is the shopping list section....</Text>
-        <AppleStyleSwipeableRow />
+        <Text>This is the shopping list content section....</Text>
         {viewVisible && (
-          <Animatable.View
+          <StyledAnimatableView
             animation={viewVisible ? 'fadeInDown' : 'fadeOutUp'}
             easing="ease-out"
             ref={view}
-            style={{
-              position: 'absolute',
-              top: 0,
-              height: viewVisible ? '100%' : 0,
-              width: viewVisible ? '100%' : 0,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'flex-start',
-              borderBottomColor: 'red',
-              borderBottomWidth: 1,
-              borderTopColor: 'red',
-              borderTopWidth: 1,
-              backgroundColor: '#6C7A89',
-              opacity: 1,
-            }}>
+            viewVisible={viewVisible}>
             {stores.map((store) => (
               <StyledButton
                 key={store}
@@ -226,34 +135,17 @@ function SettingsTab({navigation}) {
                 <StyledText>{store}</StyledText>
               </StyledButton>
             ))}
-          </Animatable.View>
+          </StyledAnimatableView>
         )}
       </Container>
-    </SafeAreaView>
+    </StyledSafeArea>
   );
 }
 
 const StackMenu = () => {
   return (
     <Stack.Navigator>
-      <Stack.Screen
-        name="Menu"
-        component={SettingsTab}
-        /* options={({route}) => ({
-          headerTitle: () => {
-            console.log('StackMenu -> route', route);
-            return (
-              <StyledButton
-                onPress={() => {
-                  route.params?.toggleStores();
-                  // route.params.toggleStores();
-                }}>
-                <StyledText>Title</StyledText>
-              </StyledButton>
-            );
-          },
-        })} */
-      />
+      <Stack.Screen name="Menu" component={SettingsTab} />
     </Stack.Navigator>
   );
 };
@@ -261,113 +153,29 @@ const StackMenu = () => {
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-const StyledView = styled(Animatable.View)`
-  width: 100%;
-  position: absolute;
-  top: 0;
-  height: 50%;
-  border: 1px solid black;
-  background-color: white;
-`;
-
-function HomeTabs({navigation, route}) {
-  console.log('HomeTabs -> route', route);
-  console.log('HomeTabs -> navigation', navigation);
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerTitle: 'KROGER',
-    });
-  }, [navigation, route]);
-
-  return (
-    <Tab.Navigator
-      initialRouteName="Analytics" /*tabBar={() => null}*/
-      screenOptions={({route}) => ({
-        tabBarIcon: ({focused, color, size}) => {
-          let iconName;
-
-          if (route.name === 'Analytics') {
-            iconName = focused
-              ? 'ios-information-circle'
-              : 'ios-information-circle-outline';
-          } else if (route.name === 'Settings') {
-            iconName = focused ? 'list-outline' : 'ios-list';
-          }
-
-          // You can return any component that you like here!
-          return <Icon name={iconName} size={size} color={color} />;
-        },
-        pNav: navigation,
-      })}>
-      <Tab.Screen name="Analytics" component={StackMenu} />
-      <Tab.Screen name="Settings" component={StackMenu} />
-    </Tab.Navigator>
-  );
-}
-
 const App = () => {
   return (
     <SafeAreaProvider>
       <NavigationContainer>
-        {/* <Stack.Navigator>
-          <Stack.Screen
-            name="Home"
-            component={Home}
-            options={{
-              title: 'My home',
-              headerStyle: {
-                backgroundColor: '#f4511e',
-              },
-              headerTintColor: '#fff',
-              headerTitleStyle: {
-                fontWeight: 'bold',
-              },
-            }}
-          />
-          <Stack.Screen
-            name="Details"
-            options={{
-              headerTitle: () => <Text>Details</Text>,
-              headerBackTitleVisible: false,
-              headerRight: () => <Text>Right</Text>,
-            }}
-            component={Details}
-          />
-          <Stack.Screen name="WithTabs">
-            {(props) => (
-              <HomeTabs navigation={props.navigation} route={props.route} />
-            )}
-          </Stack.Screen>
-        </Stack.Navigator> */}
-
         <Tab.Navigator
-          initialRouteName="Analytics" /*tabBar={() => null}*/
-          screenOptions={({route}) => ({
-            tabBarIcon: ({focused, color, size}) => {
-              let iconName;
-
-              if (route.name === 'Analytics') {
-                iconName = focused
-                  ? 'ios-information-circle'
-                  : 'ios-information-circle-outline';
-              } else if (route.name === 'Settings') {
-                iconName = focused ? 'list-outline' : 'ios-list';
-              }
-
+          initialRouteName="Analytics"
+          screenOptions={() => ({
+            tabBarIcon: ({color, size}) => {
               // You can return any component that you like here!
-              return <Icon name={iconName} size={size} color={color} />;
+              return (
+                <Icon
+                  name={'ios-information-circle'}
+                  size={size}
+                  color={color}
+                />
+              );
             },
           })}>
-          <Tab.Screen name="Analytics" component={StackMenu} />
-          <Tab.Screen name="Settings" component={Home} />
+          <Tab.Screen name="One Tab" component={StackMenu} />
         </Tab.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {flex: 1, justifyContent: 'center', alignItems: 'center'},
-});
 
 export default App;
