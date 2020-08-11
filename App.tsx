@@ -6,69 +6,17 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import * as Animatable from 'react-native-animatable';
-import styled from 'styled-components/native';
 Icon.loadFont();
 
-import {Dimensions} from 'react-native';
-
-const screenHeight = Math.round(Dimensions.get('window').height);
-
-const Container = styled.View`
-  background-color: #d2d7d3;
-  height: ${screenHeight}px;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const Button = styled.TouchableOpacity`
-  background-color: #d24d57;
-  width: 200px;
-  height: 40px;
-  border-radius: 30px;
-`;
-
-const StyledText = styled.Text`
-  text-align: center;
-  line-height: 40px;
-  color: #fff;
-`;
-
-const StyledButton = styled(Button)`
-  border-radius: 2px;
-  background-color: transparent;
-  width: 100%;
-  border: 1px solid white;
-`;
-
-const HeaderText = styled.Text`
-  text-align: center;
-  line-height: 40;
-`;
-
-const StyledAnimatableView = styled(Animatable.View)`
-  position: absolute;
-  top: 0;
-  height: ${(props) => (props.viewVisible ? '100%' : 0)};
-  width: ${(props) => (props.viewVisible ? '100%' : 0)};
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  border-bottom-color: red;
-  border-bottom-width: 1;
-  border-top-color: red;
-  border-top-width: 1px;
-  background-color: #6c7a89;
-  opacity: 1;
-`;
-
-const StyledSafeArea = styled.SafeAreaView`
-  flex: 1;
-  justify-content: space-between;
-  align-items: center;
-`;
+import {
+  Container,
+  Button,
+  StyledText,
+  StyledButton,
+  HeaderText,
+  StyledAnimatableView,
+  StyledSafeArea,
+} from './styles';
 
 function SettingsTab({navigation}) {
   const [viewVisible, setStoreSwitcherVisibility] = useState(false);
